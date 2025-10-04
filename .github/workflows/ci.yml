@@ -1,0 +1,45 @@
+
+name: e2e
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Configure env
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
+          echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> $GITHUB_ENV
+          echo "USER_PASS=${{ secrets.USER_PASS }}" >> $GITHUB_ENV
+      - run: npx playwright install --with-deps
+      - name: Run tests
+        run: npx playwright test --project=${{ matrix.project }} --reporter=html
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-${{ matrix.project }}
+          path: playwright-report
+          if-no-files-found: ignore
+      - name: Upload traces
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: traces-${{ matrix.project }}
+          path: test-results
+          if-no-files-found: ignore
