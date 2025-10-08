@@ -30,7 +30,6 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        working-directory: e2e
         run: npx playwright install --with-deps
 
       - name: Run Playwright (all tests) — ${{ matrix.project }}
