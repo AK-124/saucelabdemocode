@@ -1,0 +1,71 @@
+name: e2e
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    container: 
+      image: node:20
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]  # runs full e2e suite on all 3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Install dependencies
+        working-directory: e2e
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: e2e
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright (all tests) — ${{ matrix.project }}
+        working-directory: e2e
+        run: |
+          npx playwright test \
+            --project=${{ matrix.project }} \
+            --reporter=junit,line \
+            --reporter-options outputFile=../test-results/${{ matrix.project }}/results.xml \
+            --output=../test-results/${{ matrix.project }}
+
+      # Upload HTML report (so you can download & open it)
+      - name: Upload HTML report (${{ matrix.project }})
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report-${{ matrix.project }}
+          path: e2e/playwright-report/
+          retention-days: 14
+
+      # Upload traces/screenshots/videos on failure
+      - name: Upload traces/screenshots on failure (${{ matrix.project }})
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ matrix.project }}
+          path: test-results/${{ matrix.project }}/**
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # Post a JUnit summary in the run (pass/fail counts)
+      - name: Publish JUnit summary (${{ matrix.project }})
+        if: success() || failure()
+        uses: mikepenz/action-junit-report@v4
+        with:
+          check_name: "E2E Results (${{ matrix.project }})"
+          report_paths: test-results/${{ matrix.project }}/results.xml
