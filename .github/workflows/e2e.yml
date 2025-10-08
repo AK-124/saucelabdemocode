@@ -27,7 +27,6 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        working-directory: e2e
         run: npm ci
 
       - name: Install Playwright browsers
@@ -35,7 +34,6 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright (all tests) — ${{ matrix.project }}
-        working-directory: e2e
         run: |
           npx playwright test \
             --project=${{ matrix.project }} \
