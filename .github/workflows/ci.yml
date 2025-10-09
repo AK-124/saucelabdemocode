@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  etwoe:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
