@@ -59,3 +59,4 @@ Set in `.env` (or CI secrets):
 --testing after update
 updating the credentials in secrets and variables
 update base_url in variables
+update YML and exposed the username and pswd
