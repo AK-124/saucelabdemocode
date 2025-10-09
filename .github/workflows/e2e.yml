@@ -12,6 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         project: [chromium, firefox, webkit]  # runs full e2e suite on all 3
+        
+    env:
+      USER_EMAIL: ${{ secrets.USER_EMAIL }}          # must exist in repo Settings → Secrets
+      USER_PASS:  ${{ secrets.USER_PASS }}           # must exist in repo Settings → Secrets
+      BASE_URL:   ${{ vars.BASE_URL || 'https://www.saucedemo.com' }} 
 
     steps:
       - name: Checkout

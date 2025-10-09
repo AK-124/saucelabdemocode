@@ -21,11 +21,11 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-    ## - name: Configure env
-      ##  run: |
-        ##  echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
-       ##   echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> $GITHUB_ENV
-        ##  echo "USER_PASS=${{ secrets.USER_PASS }}" >> $GITHUB_ENV
+      - name: Configure env
+        run: |
+         echo "BASE_URL=${{ secrets.BASE_URL }}" >> $GITHUB_ENV
+          echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> $GITHUB_ENV
+         echo "USER_PASS=${{ secrets.USER_PASS }}" >> $GITHUB_ENV
       - run: npx playwright install --with-deps
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }} --reporter=html
