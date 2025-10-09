@@ -58,3 +58,4 @@ Set in `.env` (or CI secrets):
 -**testing the changes, testing 
 --testing after update
 updating the credentials in secrets and variables
+update base_url in variables
