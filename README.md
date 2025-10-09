@@ -57,3 +57,4 @@ Set in `.env` (or CI secrets):
 - **Tag strategy:** `@smoke` runs on each push, full matrix on PRs.
 -**testing the changes, testing 
 --testing after update
+updating the credentials in secrets and variables
