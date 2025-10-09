@@ -35,7 +35,6 @@ jobs:
           npx playwright test \
             --project=${{ matrix.project }} \
             --reporter=junit,line \
-            --reporter-options outputFile=../test-results/${{ matrix.project }}/results.xml \
             --output=../test-results/${{ matrix.project }}
 
       # Upload HTML report (so you can download & open it)
@@ -44,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: html-report-${{ matrix.project }}
-          path: e2e/playwright-report/
+          path: playwright-report/
           retention-days: 14
 
       # Upload traces/screenshots/videos on failure
